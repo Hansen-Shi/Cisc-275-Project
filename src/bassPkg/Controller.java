@@ -20,12 +20,12 @@ public class Controller extends Application{
 		new AnimationTimer() {
 				public void handle(long currentNanoTime) {
 				//increment the x and y coordinates, alter direction if necessary 
-				model.updateModeAndDirection(view.getDirection(), view.getMode(), view.getPauseState());
+				model.updateModeAndDirection(view.getX(),view.getY(), view.getMode(), view.getPauseState());
 				model.updateLocationandDirection();
 				//input the x coordinates, y coordinates, and direction picture
 				view.update(model.getX(), model.getY(), model.getDirection());
 				try {
-					Thread.sleep(100);
+					Thread.sleep(20);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

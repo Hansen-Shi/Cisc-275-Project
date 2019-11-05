@@ -63,9 +63,10 @@ public class View{
 	// value of the height and width of screen
 	int canvasWidth = 1080;
 	int canvasHeight = 720;
-	// value of the size of the image
-	static final int imgWidthOrig = 100;
-	static final int imgHeightOrig = 100;
+	// value of the size of0he image.000013.
+
+	static final int imgWidthOrig = 257;
+	static final int imgHeightOrig = 257;
 
 	int imgWidth = 300;
 	int imgHeight = 300;
@@ -83,10 +84,11 @@ public class View{
     BassMode bassMode;
     Direction d = Direction.EAST;
     boolean paused = false;
-	
+	double bassX;
+	double bassY;
 	//variables to determine the location of image
-	int x = 0;
-	int y = 0;
+	double x = 0;
+	double y = 0;
 	
 	//View constructor initialize the starting position for the image
 	//Called in controller
@@ -96,42 +98,35 @@ public class View{
         Group root = new Group();
         Scene theScene = new Scene(root);
         theStage.setScene(theScene);
+        root.addEventFilter(MouseEvent.MOUSE_MOVED, e -> {
+        	System.out.println(e.getSceneX() + " " + e.getSceneY());
+            bassX = e.getSceneX() - 140;
+            bassY = e.getSceneY() - 140;
+
+        });
         
-        Button pause = new Button("Pause");
+        
 
         Canvas canvas = new Canvas(canvasWidth, canvasHeight);
         root.getChildren().add(canvas);
-        root.getChildren().add(pause);
+       
         gc = canvas.getGraphicsContext2D();
         
-        pause.setTranslateX(canvasWidth/2);
-        pause.setTranslateY(canvasHeight/2);
+        
 
 		// bassMode starts with DEFAULT
         bassMode = BassMode.DEFAULT;
 		importImages();
 		
-		EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() { 
-            public void handle(ActionEvent e) 
-            { 
-                if(paused == false) {
-                	paused = true;
-                	pause.setText("Start");
-                }
-                else {
-                	paused = false;
-                	pause.setText("Pause");
-                }
-            } 
-        };
+		
         
-        pause.setOnAction(event);
-		 
+        
+		/*
         theScene.setOnKeyPressed(new EventHandler<KeyEvent>(){
         	@Override
         	public void handle(KeyEvent e) {
         		switch(e.getCode()) {
-        		case UP:
+        		case W:
         			if (d == Direction.SOUTH||d == Direction.NORTHWEST||d == Direction.NORTHEAST) {
         				d = Direction.NORTH;
         			}
@@ -142,7 +137,7 @@ public class View{
         				d = Direction.NORTHWEST;
         			}
         			break; 
-        		case DOWN:
+        		case S:
         			if (d == Direction.NORTH||d == Direction.SOUTHWEST||d == Direction.SOUTHEAST) {
         				d = Direction.SOUTH;
         			}
@@ -153,7 +148,7 @@ public class View{
         				d = Direction.SOUTHEAST;
         			}
         			break;
-        		case LEFT:
+        		case A:
         			if (d == Direction.EAST||d == Direction.SOUTHWEST||d == Direction.NORTHWEST) {
         				d = Direction.WEST;
         			}
@@ -164,7 +159,7 @@ public class View{
         				d = Direction.SOUTHWEST;
         			}
         			break;
-        		case RIGHT:
+        		case D:
         			if (d == Direction.NORTHEAST||d == Direction.WEST||d == Direction.SOUTHEAST) {
         				d = Direction.EAST;
         			}
@@ -187,10 +182,15 @@ public class View{
         		}
         	}
         });
+        */
 	}	
 	
-	public Direction getDirection() {
-		return d;
+	
+	public double getX() {
+		return bassX;
+	}
+	public double getY() {
+		return bassY;
 	}
 	
 	public BassMode getMode() {
@@ -236,9 +236,9 @@ public class View{
     }
 
 	//method used to repaint on the image and called in controller
-	public void update(int xLoc, int yLoc, Direction direction) {
-		x = xLoc;
-		y = yLoc;
+	public void update(double e, double f, Direction direction) {
+		x = e;
+		y = f;
 		currentDirection = direction;
     
         if (modeInd == -1 || currentDirection != lastDirection) {
@@ -248,7 +248,7 @@ public class View{
         }
 
         // TODO fix bassMode to be based on key presses
-		Image pics = animationSequence[bassMode.ordinal() /*bassMode.ordinal()*/];
+		Image pics = createImage("images/drop-the-bass/net.png");
 		picNum = (picNum + 1) % picCount;
 
         // Clear the canvas
@@ -267,7 +267,7 @@ public class View{
         imageView.setViewport(croppedPortion);
         imageView.setFitWidth(imgWidthOrig);
         imageView.setFitHeight(imgHeightOrig);
-        imageView.setSmooth(false);
+        imageView.setSmooth(true);
         // Crop!
         SnapshotParameters params = new SnapshotParameters();
         params.setFill(Color.TRANSPARENT);

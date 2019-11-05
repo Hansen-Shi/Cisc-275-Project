@@ -8,8 +8,8 @@ public class Model{
 	int canvasHeight;
 	int imageWidth;
 	int imageHeight;
-	int xloc=0;
-	int yloc=0;
+	double xloc=0;
+	double yloc=0;
 	double xIncr=8;
 	double yIncr=2;	
 	Direction rection = Direction.EAST;
@@ -23,13 +23,15 @@ public class Model{
 		this.imageHeight=imageHeight;
 	}
 	
-	public void updateModeAndDirection(Direction direction, BassMode bassMode, boolean paused) {
-		rection = direction;
+	public void updateModeAndDirection(double x, double y, BassMode bassMode, boolean paused) {
+		xloc = x;
+		yloc = y;
 		mood = bassMode;
 		pauseState = paused;
 	}
 	
 	public void updateLocationandDirection() {
+		/*
 		if (mood == BassMode.DEFAULT) {
 			xIncr=8;
 			yIncr=2;
@@ -74,13 +76,15 @@ public class Model{
 		xloc += xIncr;
 		yloc += yIncr;
 		getDirection();
+		*/
+		
 	}
 	
-	public int getX() {
+	public double getX() {
 		return xloc;
 	}
 	
-	public int getY() {
+	public double getY() {
 		return yloc;
 	}
 	
