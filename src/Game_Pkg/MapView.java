@@ -68,9 +68,9 @@ public class MapView {
 	//Called in controller
 	public MapView() {
         
-		Button gameOne = new Button("Game 1");
-        Button gameTwo = new Button("Game 2");
-        Button gameThree = new Button("Game 3");
+		Button gameOne = new Button("Game 3");
+        Button gameTwo = new Button("Game 1");
+        Button gameThree = new Button("Game 2");
         
         
         Group root = new Group();

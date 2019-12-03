@@ -25,6 +25,9 @@ import javafx.event.*;
 
 import javafx.scene.paint.Color;
 import java.util.ArrayList;
+
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
@@ -33,7 +36,7 @@ public class AnimalPhotoView {
     int picCount = 4; // number of pics in animation 
 
 	// value of the height and width of screen
-	static int canvasWidth = 1080;
+	static int canvasWidth = 1280;
 	static int canvasHeight = 720;
 	// value of the size of0he image.000013.
 
@@ -49,14 +52,14 @@ public class AnimalPhotoView {
     Image camera;
     Image noCamera;
 	// array of wide png images
-    Image[] animationSequence;
+    ArrayList <Image> Animals;
+    ArrayList <ImageView> animalViews;
     
-    static Image Deer;
-    static Image Turtle;
+    int counter = 6;
+    static boolean levelComplete = false;
+    
     
     boolean takePic = false;
-    static boolean picTakenDeer = false;
-    static boolean picTakenTurtle = false;
 
     boolean paused = false;
 	double bassX;
@@ -77,21 +80,56 @@ public class AnimalPhotoView {
 	//View constructor initialize the starting position for the image
 	//Called in controller
 	public AnimalPhotoView() {
+		
+		Animals = new ArrayList <Image>();
+		Animals.add(createImage("Game_Sprites/genericDeer.png"));
+		Animals.add(createImage("Game_Sprites/genericTurtle.png"));
+		Animals.add(createImage("Game_Sprites/genericHeron.png"));
+		Animals.add(createImage("Game_Sprites/genericFrog.png"));
+		Animals.add(createImage("Game_Sprites/genericOtter.png"));
+		Animals.add(createImage("Game_Sprites/genericBird.png"));
+		
+		animalViews = new ArrayList <ImageView>();
+		animalViews.add(new ImageView("Game_Sprites/deer.png"));
+		animalViews.add(new ImageView("Game_Sprites/turtle.png"));
+		animalViews.add(new ImageView("Game_Sprites/heron.png"));
+		animalViews.add(new ImageView("Game_Sprites/frog.png"));
+		animalViews.add(new ImageView("Game_Sprites/otter.png"));
+		animalViews.add(new ImageView("Game_Sprites/genericBird.png"));
+		
+		setImageView(animalViews);
         
         Group root = new Group();
         gameTwo = new Scene(root);
         
         Button home = new Button("Home");
+        Alert turtleAlert = new Alert(AlertType.NONE);
+        Alert deerAlert = new Alert(AlertType.NONE);
+        Alert heronAlert = new Alert(AlertType.NONE);
+        Alert frogAlert = new Alert(AlertType.NONE);
+        Alert otterAlert = new Alert(AlertType.NONE);
+        Alert birdAlert = new Alert(AlertType.NONE);
         
-        Deer = createImage("Game_Sprites/Deer.png");
-        Turtle = createImage("Game_Sprites/turtle.png");
-        ImagePattern pat = new ImagePattern(Deer);
-        ImagePattern pat2 = new ImagePattern(Turtle);
+         
+        ImagePattern deerPat = new ImagePattern(Animals.get(0));
+        ImagePattern turtlePat = new ImagePattern(Animals.get(1));
+        ImagePattern heronPat = new ImagePattern(Animals.get(2));
+        ImagePattern frogPat = new ImagePattern(Animals.get(3));
+        ImagePattern otterPat = new ImagePattern(Animals.get(4));
+        ImagePattern birdPat = new ImagePattern(Animals.get(5));
         
         Rectangle deer = new Rectangle(250, 200, 100, 100);
-        deer.setFill(pat);
-        Rectangle turtle = new Rectangle(400, 350, 100, 100);
-        turtle.setFill(pat2);
+        deer.setFill(deerPat);
+        Rectangle turtle = new Rectangle(400, 400, 80, 80);
+        turtle.setFill(turtlePat);
+        Rectangle heron = new Rectangle (600, 250, 200, 150);
+        heron.setFill(heronPat);
+        Rectangle frog = new Rectangle(175, 350, 75, 75);
+        frog.setFill(frogPat);
+        Rectangle otter = new Rectangle(900, 250, 100, 100);
+        otter.setFill(otterPat);
+        Rectangle bird = new Rectangle(550, 100, 100, 100);
+        bird.setFill(birdPat);
         
         home.setOnAction(new EventHandler<ActionEvent>() {
         	public void handle(ActionEvent e) {
@@ -102,43 +140,111 @@ public class AnimalPhotoView {
         deer.setOnMouseEntered(e ->{
         	takePic = true;
         	species = Animal.DEER;
-        	System.out.println(takePic + ", " + species);
         });
         
         deer.setOnMouseExited(e ->{
         	takePic = false;
         	species = Animal.NONE;
-        	System.out.println(takePic + ", " + species);
         });
         
         turtle.setOnMouseEntered(e ->{
         	takePic = true;
         	species = Animal.TURTLE;
-        	System.out.println(takePic + ", " + species);
         });
         
         turtle.setOnMouseExited(e ->{
         	takePic = false;
         	species = Animal.NONE;
-        	System.out.println(takePic + ", " + species);
+        });
+        
+        heron.setOnMouseEntered(e ->{
+        	takePic = true;
+        	species = Animal.HERON;
+        });
+        
+        heron.setOnMouseExited(e ->{
+        	takePic = false;
+        	species = Animal.NONE;
+        });
+        
+        frog.setOnMouseEntered(e ->{
+        	takePic = true;
+        	species = Animal.FROG;
+        });
+        
+        frog.setOnMouseExited(e ->{
+        	takePic = false;
+        	species = Animal.NONE;
+        });
+        
+        otter.setOnMouseEntered(e ->{
+        	takePic = true;
+        	species = Animal.OTTER;
+        });
+        
+        otter.setOnMouseExited(e ->{
+        	takePic = false;
+        	species = Animal.NONE;
+        });
+        
+        bird.setOnMouseEntered(e ->{
+        	takePic = true;
+        	species = Animal.BIRD;
+        });
+        
+        bird.setOnMouseExited(e ->{
+        	takePic = false;
+        	species = Animal.NONE;
         });
         
         root.addEventFilter(MouseEvent.MOUSE_MOVED, e -> {
-        	//System.out.println(e.getSceneX() + " " + e.getSceneY());
             bassX = e.getSceneX() - 25;
             bassY = e.getSceneY() - 50;
         });
         
         root.addEventFilter(MouseEvent.MOUSE_CLICKED, e->{
         	if(takePic == true && species == Animal.DEER) {
-        		root.getChildren().removeAll(deer, turtle);
-        		System.out.println("I swear im working");
-        		picTakenDeer = true;
-        		}
+        		root.getChildren().removeAll(deer);
+        		createAlerts(deerAlert, "They're surprisingly good swimmers",
+        				"A White Tailed Deer!\n" + "It's a buck at that, you can tell cause he's got antlers", animalViews.get(0));
+        		deerAlert.showAndWait();
+        		counter -= 1;
+        	}
+        	
         	else if (takePic == true && species == Animal.TURTLE) {
-        		root.getChildren().removeAll(deer, turtle);
-        		System.out.println("Still working I promise");
-        		picTakenTurtle = true;
+        		root.getChildren().remove(turtle);
+        		createAlerts(turtleAlert, "Their bright pastron doesn't quite match their shy nature "
+        		, "A Red Bellied Turtle!\n" + "Not to be confused with its cousin the painted turtle...", animalViews.get(1));
+        		turtleAlert.showAndWait();
+        		counter -= 1;
+        	}
+        	else if (takePic == true && species == Animal.HERON) {
+        		root.getChildren().remove(heron);
+        		createAlerts(heronAlert, "They're huge with a 6 foot wingspan, wowzers",
+        				"A Great Blue Heron!\n" + "These birds stand perfectly still in the water waiting to strike", animalViews.get(2));
+        		heronAlert.showAndWait();
+        		counter -= 1;
+        	}
+        	else if (takePic == true && species == Animal.FROG) {
+        		root.getChildren().remove(frog);
+        		createAlerts(frogAlert, "Males can make a cow-like moo sound", 
+        				"A Bullfrog!\n" + "They got a camo coat on", animalViews.get(3));
+        		frogAlert.showAndWait();
+        		counter -= 1;
+        	}
+        	else if (takePic == true && species == Animal.OTTER) {
+        		root.getChildren().remove(otter);
+        		createAlerts(otterAlert, "Don't spook them, they scream real loud when frightened", 
+        				"A North American River Otter!\n" + "These little fellas need a lot of seafood everyday", animalViews.get(4));
+        		otterAlert.showAndWait();
+        		counter -= 1;
+        	}
+        	else if (takePic == true && species == Animal.BIRD) {
+        		root.getChildren().remove(bird);
+        		createAlerts(birdAlert, "These birds love to visit the Delaware Bay during migration season", 
+        				"A Red Knot!\n" + "These little guys fly real far every Spring and Fall", animalViews.get(5));
+        		birdAlert.showAndWait();
+        		counter -= 1;
         	}
         });
         
@@ -146,6 +252,10 @@ public class AnimalPhotoView {
         root.getChildren().add(canvas);
         root.getChildren().add(deer);
         root.getChildren().add(turtle);
+        root.getChildren().add(heron);
+        root.getChildren().add(frog);
+        root.getChildren().add(otter);
+        root.getChildren().add(bird);
         root.getChildren().add(home);
         
         gc = canvas.getGraphicsContext2D();
@@ -169,7 +279,23 @@ public class AnimalPhotoView {
 	public static Scene getScene() {
 		return gameTwo;
 	}
+	public static boolean getCompletion() {
+		return levelComplete;
+	}
 	
+	private void createAlerts(Alert a, String content, String header,ImageView img) {
+		a.setAlertType(AlertType.INFORMATION);
+		a.setContentText(content);
+		a.setGraphic(img);
+		a.setHeaderText(header);
+	}
+	
+	private void setImageView(ArrayList <ImageView> list) {
+		for (int i = 0; i<list.size(); i++) {
+			list.get(i).setFitHeight(200);
+			list.get(i).setFitWidth(200);
+		}
+	}
 	
 	//Method used to import the images into the 2D image array
 	private void importImages() {
@@ -210,6 +336,11 @@ public class AnimalPhotoView {
 		else {
 			pics = camera;
 			picNum = 0;
+		}
+		
+		if (counter == 0) {
+			gameLevel = Level.MAP;
+			levelComplete = true;
 		}
 		
 
@@ -254,22 +385,7 @@ public class AnimalPhotoView {
 	
 	public static void getPhotoTurtle() {
 		
-		gc.clearRect(0, 0, canvasWidth, canvasHeight);
-		gc.drawImage(Turtle, -725, -325);
 		}
-	public static void getPhotoDeer() {
-		
-		gc.clearRect(0, 0, canvasWidth, canvasHeight);
-		gc.drawImage(Deer, -125, -100);
-	}
-	
-	public static boolean pictureTakenDeer() {
-		return picTakenDeer;
-	}
-	
-	public static boolean pictureTakenTurtle() {
-		return picTakenTurtle;
-	}
 	
 	public static Level getLevel() {
 		Level g = gameLevel;
