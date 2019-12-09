@@ -2,7 +2,7 @@ package Game_Pkg;
 
 import javafx.scene.image.Image;
 
-public class EnemyFishCollect {
+public class EnemyFishCollect implements java.io.Serializable{
 	double x;
 	double y;
 	int vX;

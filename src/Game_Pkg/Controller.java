@@ -30,9 +30,9 @@ public class Controller extends Application {
 		
 		model = new Model(viewmap.getWidth(), viewmap.getHeight(), viewmap.getImageWidth(), viewmap.getImageHeight());
 		runOffGameView = new RunOffGameView();
-		runOffGameModel = new RunOffGameModel(1080,720, runOffGameView.blobs, runOffGameView.bushs);
-		animalPhotoView = new AnimalPhotoView();
-		animalPhotoModel = new AnimalPhotoModel(1080, 720);
+		runOffGameModel = new RunOffGameModel(runOffGameView.blobs, runOffGameView.bushs);
+		animalPhotoModel = new AnimalPhotoModel();
+		animalPhotoView = new AnimalPhotoView(AnimalPhotoModel.getAnimals());
 		netGameView = new NetGameView();
 		netModel = new NetGameModel(1080, 720, 300, 300, netGameView.collectables, netGameView.enemies, netGameView.trashList, netGameView.net,
 				netGameView.score);
@@ -61,8 +61,8 @@ public class Controller extends Application {
 					theStage.setScene(AnimalPhotoView.getScene());
 					theStage.setMaximized(true);
 					level = AnimalPhotoView.getLevel();
-					animalPhotoModel.updateLocation(animalPhotoView.getX(), animalPhotoView.getY());
-					animalPhotoView.update(animalPhotoView.getX(), animalPhotoView.getY());
+					AnimalPhotoModel.updateCompletion(animalPhotoView.getRemovedAnimals());
+					animalPhotoView.update(animalPhotoView.getX(), animalPhotoView.getY(), AnimalPhotoModel.getComplete());
 					break;
 
 				case LEVELTHREE:

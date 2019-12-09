@@ -3,9 +3,11 @@ package Game_Pkg;
 
 import javafx.scene.image.Image;
 
-public class NormalFishCollect {
-	double x;
-	double y;
+
+
+public class NormalFishCollect implements java.io.Serializable{
+	public double x;
+	public double y;
 	int vX;
 	Image img = new Image("Game_Sprites/fish_bass_left.png");
 	

@@ -1,26 +1,33 @@
 package Game_Pkg;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 
-public class RunOffGameModel {
-	int canvasWidth;
-	int canvasHeight;
+public class RunOffGameModel implements Serializable {
 	int playerX = 0;
 	int playerY = 0;
 	int score;
 	ArrayList<OilBlob> blobs = new ArrayList<OilBlob>();
 	ArrayList<Rectangle> bushs = new ArrayList<Rectangle>();
-
-	public RunOffGameModel(int canvasWidth, int canvasHeight, ArrayList<OilBlob> blobs, ArrayList<Rectangle> bushs) {
-		this.canvasWidth = canvasWidth;
-		this.canvasHeight = canvasHeight;
+	
+	/**
+	 * constructor for the game model
+	 * @param blobs the arraylist of blobs needed
+	 * @param bushs the arraylist of bushes needed
+	 */
+	public RunOffGameModel(ArrayList<OilBlob> blobs, ArrayList<Rectangle> bushs) {
 		this.blobs = blobs;
 		this.bushs = bushs;
 	}
-
+	
+	/**
+	 * updates and redraws the canvas. Also handles if collision between items happen
+	 * @param x the x location of the player's cursor
+	 * @param y the y location of the player's cursor
+	 */
 	public void updateLocation(int x, int y) {
 		playerX = x;
 		playerY = y;

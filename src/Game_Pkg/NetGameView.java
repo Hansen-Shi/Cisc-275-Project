@@ -31,24 +31,19 @@ import javafx.scene.control.Label;
 // NOTE: will not be needed once lab is complete
 import java.util.Random;
 
-public class NetGameView {
+public class NetGameView implements java.io.Serializable{
 	int picNum = -1; // index for which picture to use
-	int picCount = 4; // number of pics in animation
-
 	// value of the height and width of screen
 	int canvasWidth = 1920;
 	int canvasHeight = 1080;
-	// value of the size of0he image.000013.
-
+	// value of the size of the net image
 	static final int imgWidthOrig = 257;
 	static final int imgHeightOrig = 257;
-
 	int imgWidth = 300;
 	int imgHeight = 300;
 
-	GraphicsContext gc;
+	//Alerts used as tutorial and booleans to ensure they are seen before the game starts
 	Alert fishAlert = new Alert(AlertType.INFORMATION);
-	
 	Alert enemyAlert = new Alert(AlertType.INFORMATION);
 	Alert trashAlert = new Alert(AlertType.INFORMATION);
 	Alert endAlert = new Alert(AlertType.CONFIRMATION);
@@ -57,37 +52,40 @@ public class NetGameView {
 	boolean alert2 = true;
 	boolean alert3 = true;
 	boolean alert4 = true;
-	Image background;
+	
+	Image background; //ocean background image
+	public ArrayList<NormalFishCollect> collectables = new ArrayList<NormalFishCollect>(); //normal fish arraylist, meant to be avoided in game
+	public ArrayList<EnemyFishCollect> enemies = new ArrayList<EnemyFishCollect>(); //enemy fish arraylist, meant to be collected in game
+	public ArrayList<TrashCollect> trashList = new ArrayList<TrashCollect>(); //trash arraylist, meant to be collected in game
 
-	ArrayList<NormalFishCollect> collectables = new ArrayList<NormalFishCollect>();
-	ArrayList<EnemyFishCollect> enemies = new ArrayList<EnemyFishCollect>();
-	ArrayList<TrashCollect> trashList = new ArrayList<TrashCollect>();
-	// array of wide png images
-	Image[] animationSequence;
-
-	// Used to determine the direction to warp the bass image into
-
-	int modeInd = -1;
-	// Used to index the animationSequence outter array.
 
 	boolean paused = false;
-	double bassX;
-	double bassY;
+	double bassX; //net x location to be returned
+	double bassY;//net y location to be returned
 
 	// variables to determine the location of image
 	double x = 0;
-	Popup popup = new Popup();
-	int score = 0;
-	Text t;
 	double y = 0;
-	Net net;
+	
+	int waittime = 3000;
+	
+	public Net net; //net object to be passed between classes
 
-	static Scene gameThree;
+	public int score = 0; //score of the game
+	Text t; //text used to display score
+	static Scene gameThree; //definining which scene this is
+	
+	GraphicsContext gc; //used to draw images
 
-	static Level gameLevel = Level.LEVELTHREE;
+	static Level gameLevel = Level.LEVELTHREE; //sets game level
 
 	// View constructor initialize the starting position for the image
 	// Called in controller
+	/**
+	 * sets all permanent fixtures onto the scene, as well as sets up event handelers for the mouse and interactable objects.
+	 * It also sets up the array of collectable objects.
+	 * 
+	 */
 	public NetGameView() {
 		net = new Net(0, 0);
 		t = new Text("" + score);
@@ -105,13 +103,6 @@ public class NetGameView {
 		enemyAlert.setGraphic(new ImageView(new Image("Game_Sprites/fish_catfish_left_0.png")));
 		trashAlert.setGraphic(new ImageView(new Image("Game_Sprites/trashbag.png")));
 		
-		Popup popup = new Popup();
-		popup.setX(canvasWidth / 2);
-		popup.setY(canvasHeight / 2);
-		Label label = new Label("TGood Job, you win!"); 
-		popup.getContent().add(label);
-		
-		popup.hide();
 		
 		root.addEventFilter(MouseEvent.MOUSE_MOVED, e -> {
 			// System.out.println(e.getSceneX() + " " + e.getSceneY());
@@ -175,11 +166,17 @@ public class NetGameView {
 		t.setTranslateY(40);
 
 	}
-
+	/**
+	 * returns net x location to be passed to model
+	 * @return bassX
+	 */
 	public double getX() {
 		return bassX;
 	}
-
+	/**
+	 * returns net y location to be passed to model
+	 * @return bassY
+	 */
 	public double getY() {
 		return bassY;
 	}
@@ -189,6 +186,9 @@ public class NetGameView {
 	}
 
 	// Method used to import the images into the 2D image array
+	/**
+	 * sets background image as underwater.png
+	 */
 	private void importImages() {
 
 		// Create array of the images. Each image pixel map contains
@@ -203,12 +203,27 @@ public class NetGameView {
 	}
 
 	// Read image from file and return
+	/**
+	 * used to set images based on their url
+	 * @param image_file url location of the image file within the project
+	 * @return img, the image object associated with the input url
+	 */
 	private Image createImage(String image_file) {
 		Image img = new Image(image_file);
 		return img;
 	}
 
 	// method used to repaint on the image and called in controller
+	/**
+	 * takes in updated arrays and image locations from model to be redrawn from controller
+	 * This method also makes it so no objects besides the background until the tutorial is seen, or after the game ends
+	 * @param e x location of the net
+	 * @param f y location of the net
+	 * @param imgs normal fish to be drawn, as updated from the array
+	 * @param enemie enemy fish to be drawn, as updated from the array
+	 * @param trashes trash objects to be drawn, as updated from the array
+	 * @param score updated score of the game
+	 */
 	public void update(double e, double f, ArrayList<NormalFishCollect> imgs, ArrayList<EnemyFishCollect> enemie,
 			ArrayList<TrashCollect> trashes, int score) {
 		if(alert1 || alert2 || alert3 || alert4) {
@@ -225,7 +240,7 @@ public class NetGameView {
 			
 			try {
 				
-				Thread.sleep(3000);
+				Thread.sleep(waittime);
 				gameLevel = Level.MAP;
 				
 			} catch (InterruptedException e1) {
@@ -265,8 +280,6 @@ public class NetGameView {
 			SnapshotParameters params = new SnapshotParameters();
 			params.setFill(Color.TRANSPARENT);
 			Image croppedImage = imageView.snapshot(params, null);
-			updateFish(imgs);
-			updateTrash(trashes);
 			drawArray(collectables, gc);
 			drawEnemies(enemies, gc);
 			drawTrash(trashes, gc);
@@ -279,22 +292,38 @@ public class NetGameView {
 	}
 
 	// getter methods to get the frame dimensions and image dimensions
+	/**
+	 * returns width of the canvas drawn, as set in the parameters of the view class
+	 * @return canvasWidth
+	 */
 	public int getWidth() {
 		return canvasWidth;
 	}
-
+	/**
+	 * returns height of the canvas drawn, as set in the parameters of the view class
+	 * @return canvasHeight
+	 */
 	public int getHeight() {
 		return canvasHeight;
 	}
-
+	/**
+	 * returns width of net image to be drawn
+	 * @return imgWidth
+	 */
 	public int getImageWidth() {
 		return imgWidth;
 	}
-
+	/**
+	 * returns height of net image to be drawn
+	 * @return imgHeight
+	 */
 	public int getImageHeight() {
 		return imgHeight;
 	}
-
+	/**
+	 * returns which scene this should be, which is gameThree
+	 * @return gameThree
+	 */
 	public static Scene getScene() {
 		return gameThree;
 	}
@@ -302,46 +331,27 @@ public class NetGameView {
 	// If the bass is facing to the WEST, we must flip it, then rotate accordingly
 	// for NORTH/SOUTH
 	// Then draw to gc
+	/**
+	 * draws the net image onto the graphics context using x and y
+	 * @param gc GraphicsContext
+	 * @param image the image to be drawn
+	 * @param x x location to draw the image at
+	 * @param y y location to draw image at
+	 */
 	private void transformAndDraw(GraphicsContext gc, Image image, double x, double y) {
-		// clockwise rotation angle
-		// Why clockwise? I don't know. It should probably be counter-clockwise
-		double theta = 0.0;
-		boolean isFlipped = false;
-
-		// Setting x scale to -1 will flip it horizontally
-		if (isFlipped) {
-			ImageView iv = new ImageView(image);
-			iv.setScaleX(-1.0);
-			SnapshotParameters params = new SnapshotParameters();
-			params.setFill(Color.TRANSPARENT);
-			image = iv.snapshot(params, null);
-		}
-
-		// Rotate the CANVAS and NOT the Image, because rotating the image
-		// will crop part of the bass's tail for certain angles
-
+		
 		gc.save(); // saves the current state on stack, including the current transform
 
-		// set canvas rotation about the point (x+imageWidth/2, y+imageWidth/2) by angle
-		// theta
-		Rotate r = new Rotate(theta, x + imgWidth / 2, y + imgWidth / 2);
-		// Transform gc by the rotation
-		gc.setTransform(r.getMxx(), r.getMyx(), r.getMxy(), r.getMyy(), r.getTx(), r.getTy());
-
-		// draw the subimage from the original png to animate the bass's motion
-		// The arguments for drawImage are:
-		//
-		// drawImage(sourceImage, sX, sY, sWidth, sHeight, dX, dY, dWidth, dHeight)
-		//
-		// This means that a rectangle of size (sWidth, sHeight) will be CROPPED from
-		// sourceImage
-		// at location (sX, sY), RESIZED to (dWidth, dHeight), and drawn to the
-		// parent of the GraphicsContext at location (dX, dY).
+		//draws image at the specified locations x,y with given heights and widths of image
 		gc.drawImage(image, 0, 0, imgWidthOrig, imgHeightOrig, x, y, imgWidth, imgHeight);
 
-		// back to original state (before rotation)
+		
 	}
-
+	/**
+	 * draws the array of normal fishes onto the graphics context
+	 * @param images arraylist of fish objects to be drawn
+	 * @param gc GraphicsContext
+	 */
 	private void drawArray(ArrayList<NormalFishCollect> images, GraphicsContext gc) {
 		gc.save();
 		for (int i = 0; i < images.size(); i++) {
@@ -351,7 +361,11 @@ public class NetGameView {
 		gc.restore();
 
 	}
-
+	/**
+	 * draws the array of enemy fishes onto the graphics context
+	 * @param images arraylist of fish objects to be drawn
+	 * @param gc GraphicsContext
+	 */
 	private void drawEnemies(ArrayList<EnemyFishCollect> images, GraphicsContext gc) {
 		gc.save();
 		for (int i = 0; i < images.size(); i++) {
@@ -361,7 +375,11 @@ public class NetGameView {
 		gc.restore();
 
 	}
-
+	/**
+	 * draws the array of trash  onto the graphics context
+	 * @param images arraylist of trash objects to be drawn
+	 * @param gc GraphicsContext
+	 */
 	private void drawTrash(ArrayList<TrashCollect> images, GraphicsContext gc) {
 		gc.save();
 		for (int i = 0; i < images.size(); i++) {
@@ -372,31 +390,15 @@ public class NetGameView {
 
 	}
 
-	public void updateFish(ArrayList<NormalFishCollect> fishes) {
-		for (int i = 0; i < collectables.size(); i++) {
-			collectables.get(i).x = fishes.get(i).x;
-
-		}
-	}
-
-	public void updateEnemies(ArrayList<EnemyFishCollect> fishes) {
-		for (int i = 0; i < enemies.size(); i++) {
-			enemies.get(i).x = fishes.get(i).x;
-
-		}
-	}
-
-	public void updateTrash(ArrayList<TrashCollect> fishes) {
-		for (int i = 0; i < trashList.size(); i++) {
-			trashList.get(i).x = fishes.get(i).x;
-
-		}
-	}
-
+	/**
+	 * returns the game level we are in
+	 * @return g game level we are in
+	 */
 	public static Level getLevel() {
 		Level g = gameLevel;
 		gameLevel = Level.LEVELTHREE;
 		return g;
 	}
+	
 
 }

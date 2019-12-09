@@ -2,7 +2,7 @@ package Game_Pkg;
 
 import javafx.scene.image.Image;
 
-public class Net {
+public class Net implements java.io.Serializable{
 	double x;
 	double y;
 	Image netImg = new Image("Game_Sprites/Net.png");

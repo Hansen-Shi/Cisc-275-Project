@@ -24,6 +24,10 @@ import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
 import javafx.event.EventHandler;
 import javafx.event.*;
+
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -32,13 +36,19 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
-public class RunOffGameView {
+public class RunOffGameView implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	int picNum = -1; // index for which picture to use
 	// int picCount = 4; // number of pics in animation
 
 	// value of the height and width of screen
-	static int canvasWidth = 1080;
-	static int canvasHeight = 720;
+	static Dimension screenSizze = Toolkit.getDefaultToolkit().getScreenSize();
+	static int canvasWidth = (int) screenSizze.getWidth();
+	static int canvasHeight = (int) screenSizze.getHeight();
 	// value of the size of0he image.000013.
 
 	static final int imgWidthOrig = 100;
@@ -72,8 +82,9 @@ public class RunOffGameView {
 
 	static Scene gameOne;
 
-	// View constructor initialize the starting position for the image
-	// Called in controller
+	/**
+	 * constructor
+	 */
 	public RunOffGameView() {
 		Button bushHeal = new Button("Restore bushes");
 		Button tutorial = new Button("Instructions"); 
@@ -157,7 +168,9 @@ public class RunOffGameView {
 		return paused;
 	}
 
-	// Method used to import the images into the 2D image array
+	/** Method used to import the images into the 2D image array
+	 * 
+	 */
 	private void importImages() {
 
 		// Create array of the images. Each image pixel map contains
@@ -174,13 +187,24 @@ public class RunOffGameView {
 		background = createImage(img_file_base + "Runoff" + ext);
 	}
 
-	// Read image from file and return
+	/**
+	 * uses a string to find the image needed
+	 * @param image_file the location of the image
+	 * @return the image
+	 */
 	private Image createImage(String image_file) {
 		Image img = new Image(image_file);
 		return img;
 	}
 
-	// method used to repaint on the image and called in controller
+	/**
+	 * method used to repaint on the image and called in controller
+	 * @param e the x location of the player's cursor
+	 * @param f the y location of the player's cursor
+	 * @param score the score of the game
+	 * @param blobs the arraylist of oil blob images
+	 * @param bushs the arraylist of the bush images
+	 */
 	public void update(int e, int f, int score, ArrayList<OilBlob> blobs, ArrayList<Rectangle> bushs) {
 		playerX = e;
 		playerY = f;
@@ -256,6 +280,15 @@ public class RunOffGameView {
 	// If the bass is facing to the WEST, we must flip it, then rotate accordingly
 	// for NORTH/SOUTH
 	// Then draw to gc
+	/**
+	 *  If the bass is facing to the WEST, we must flip it, then rotate accordingly
+	 *  for NORTH/SOUTH
+	 *  Then draw to gc
+	 * @param gc the graphic's context being used
+	 * @param image the image being modified
+	 * @param x the x location of the image
+	 * @param y the y location of the image
+	 */
 	private void transformAndDraw(GraphicsContext gc, Image image, double x, double y) {
 		// clockwise rotation angle
 		// Why clockwise? I don't know. It should probably be counter-clockwise
